@@ -31,12 +31,14 @@ pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds
 ./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1
 ```
 
-Cloudflare Pages can use:
+Cloudflare Workers Builds can use:
 
 ```text
-Build command: leave empty
-Build output directory: public
+Build command: true
+Deploy command: npx wrangler deploy
 ```
+
+The `wrangler.jsonc` file points Workers Static Assets at `./public`.
 
 After adding or replacing wheels, put them in `public/packages/` and update the
 matching static pages under `public/simple/`.

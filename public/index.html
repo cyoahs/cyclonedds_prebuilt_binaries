@@ -104,6 +104,14 @@
             <p>只从本站索引安装：</p>
             <pre><code data-command="index">pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
           </article>
+          <article class="panel notice-panel">
+            <h2>Unitree SDK2 Python 兼容性提醒</h2>
+            <p>Python 版本高于 3.10 时，<code>unitree_sdk2_python</code> 搭配 <code>cyclonedds==0.10.2</code> 可能在 <code>ChannelFactoryInitialize</code> 附近出现 buffer overflow；参考 <a href="https://github.com/unitreerobotics/unitree_sdk2_python/issues/90">unitreerobotics/unitree_sdk2_python#90</a>。</p>
+            <p>建议先安装 <code>unitree_sdk2_python</code>，再用本站提供的更高版本 CycloneDDS 覆盖：</p>
+            <pre><code>pip install --upgrade --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds==0.10.5</code></pre>
+          </article>
+        </div>
+        <div class="content-grid single">
           <article class="panel">
             <h2>直接下载 wheel</h2>
             <ul class="file-list">

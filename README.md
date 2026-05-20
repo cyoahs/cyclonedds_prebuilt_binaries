@@ -29,6 +29,19 @@ Direct wheel downloads are available under:
 https://pypi.cyoahs.dev/packages/
 ```
 
+### Unitree SDK2 Python compatibility note
+
+When using Python newer than 3.10, `unitree_sdk2_python` with
+`cyclonedds==0.10.2` may hit a runtime buffer overflow around
+`ChannelFactoryInitialize`; see
+[unitreerobotics/unitree_sdk2_python#90](https://github.com/unitreerobotics/unitree_sdk2_python/issues/90).
+For Python 3.11 or 3.12 environments, install `unitree_sdk2_python` first, then
+override CycloneDDS with a newer wheel from this index:
+
+```bash
+pip install --upgrade --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds==0.10.5
+```
+
 ## Build Environments
 
 The current wheels were built on Unitree factory images:

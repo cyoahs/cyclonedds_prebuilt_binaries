@@ -104,6 +104,14 @@
             <p>Install only from this index:</p>
             <pre><code data-command="index">pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
           </article>
+          <article class="panel notice-panel">
+            <h2>Unitree SDK2 Python compatibility note</h2>
+            <p>On Python versions newer than 3.10, <code>unitree_sdk2_python</code> with <code>cyclonedds==0.10.2</code> may hit a buffer overflow around <code>ChannelFactoryInitialize</code>; see <a href="https://github.com/unitreerobotics/unitree_sdk2_python/issues/90">unitreerobotics/unitree_sdk2_python#90</a>.</p>
+            <p>Install <code>unitree_sdk2_python</code> first, then override CycloneDDS with a newer wheel from this index:</p>
+            <pre><code>pip install --upgrade --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds==0.10.5</code></pre>
+          </article>
+        </div>
+        <div class="content-grid single">
           <article class="panel">
             <h2>Direct wheel downloads</h2>
             <ul class="file-list">

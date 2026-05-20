@@ -221,6 +221,10 @@ h2 {
   grid-template-columns: 1fr;
 }
 
+.content-grid + .content-grid {
+  margin-top: 22px;
+}
+
 .panel {
   min-width: 0;
   padding: 24px;
@@ -232,6 +236,11 @@ h2 {
 
 .command-panel {
   border-color: #c5d9df;
+}
+
+.notice-panel {
+  border-color: #d8b37d;
+  background: #fff9f0;
 }
 
 pre {

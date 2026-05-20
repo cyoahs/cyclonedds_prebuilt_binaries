@@ -16,6 +16,7 @@ ROOT="${ROOT:-$PWD/cyclonedds_wheel_build}"
 JOBS="${JOBS:-$(nproc)}"
 AUDITWHEEL="${AUDITWHEEL:-1}"
 CYCLONEDDS_REPO="${CYCLONEDDS_REPO:-https://github.com/eclipse-cyclonedds/cyclonedds.git}"
+GITHUB_HTTPS_PROXY="${GITHUB_HTTPS_PROXY:-${https_proxy:-10.0.8.118:20172}}"
 
 VERSIONS=("$@")
 if [ "${#VERSIONS[@]}" -eq 0 ]; then
@@ -71,17 +72,72 @@ clean_env_for_build() {
   unset PKG_CONFIG_PATH || true
 }
 
+clean_runtime_env() {
+  env \
+    -u CYCLONEDDS_HOME \
+    -u CMAKE_PREFIX_PATH \
+    -u DDSHOME \
+    -u LD_LIBRARY_PATH \
+    -u CPATH \
+    -u C_INCLUDE_PATH \
+    -u CPLUS_INCLUDE_PATH \
+    -u LIBRARY_PATH \
+    -u PKG_CONFIG_PATH \
+    "$@"
+}
+
+git_https() {
+  env https_proxy="$GITHUB_HTTPS_PROXY" HTTPS_PROXY="$GITHUB_HTTPS_PROXY" git "$@"
+}
+
+prefix_libdir() {
+  local prefix="$1"
+
+  if [ -d "$prefix/lib" ]; then
+    echo "$prefix/lib"
+  elif [ -d "$prefix/lib64" ]; then
+    echo "$prefix/lib64"
+  else
+    die "CycloneDDS library directory not found under $prefix"
+  fi
+}
+
+verify_cyclonedds_wheel() {
+  local wheel="$1"
+
+  "$PYTHON_BIN" - "$wheel" <<'PY'
+import sys
+import zipfile
+
+wheel = sys.argv[1]
+with zipfile.ZipFile(wheel) as zf:
+    names = set(zf.namelist())
+    library_py = zf.read("cyclonedds/__library__.py").decode()
+
+if "in_wheel = True" not in library_py:
+    raise SystemExit(f"{wheel}: cyclonedds/__library__.py is not configured for bundled libraries")
+if "cyclonedds.libs" not in library_py:
+    raise SystemExit(f"{wheel}: cyclonedds/__library__.py does not look in cyclonedds.libs")
+if not any(name.startswith("cyclonedds.libs/libddsc") for name in names):
+    raise SystemExit(f"{wheel}: bundled libddsc is missing")
+if not any(name.startswith("cyclonedds.libs/libcycloneddsidl") for name in names):
+    raise SystemExit(f"{wheel}: bundled libcycloneddsidl is missing")
+
+print(f"Verified bundled CycloneDDS libraries in {wheel}")
+PY
+}
+
 clone_cyclonedds_c() {
   local ver="$1"
   local src="$ROOT/src/cyclonedds-$ver"
 
   if [ -d "$src/.git" ]; then
     log "Updating CycloneDDS C source $ver"
-    git -C "$src" fetch --tags --force
+    git_https -C "$src" fetch --tags --force
   else
     log "Cloning CycloneDDS C source $ver"
-    git clone "$CYCLONEDDS_REPO" "$src"
-    git -C "$src" fetch --tags --force
+    git_https clone "$CYCLONEDDS_REPO" "$src"
+    git_https -C "$src" fetch --tags --force
   fi
 
   if git -C "$src" rev-parse -q --verify "refs/tags/$ver" >/dev/null; then
@@ -157,6 +213,7 @@ build_python_wheel() {
   local venv="$ROOT/venv/cyclonedds-$ver"
   local raw="$ROOT/raw_wheels/$ver"
   local out="$ROOT/wheelhouse/$ver"
+  local libdir
 
   log "Building Python wheel cyclonedds==$ver"
 
@@ -165,18 +222,19 @@ build_python_wheel() {
   rm -rf "$raw" "$out"
   mkdir -p "$raw" "$out"
 
+  libdir="$(prefix_libdir "$prefix")"
+
   export CYCLONEDDS_HOME="$prefix"
   export CMAKE_PREFIX_PATH="$prefix"
+  export STANDALONE_WHEELS=1
   export PATH="$prefix/bin:$PATH"
-
-  if [ -d "$prefix/lib" ]; then
-    export LD_LIBRARY_PATH="$prefix/lib"
-  elif [ -d "$prefix/lib64" ]; then
-    export LD_LIBRARY_PATH="$prefix/lib64"
-  fi
+  export LD_LIBRARY_PATH="$libdir"
+  export LIBRARY_PATH="$libdir"
+  export PKG_CONFIG_PATH="$libdir/pkgconfig"
 
   "$venv/bin/python" -m pip wheel \
-    --no-binary=cyclonedds \
+    --no-cache-dir \
+    --no-binary cyclonedds \
     "cyclonedds==$ver" \
     -w "$raw" \
     2>&1 | tee "$ROOT/logs/pip-wheel-cyclonedds-$ver.log"
@@ -191,23 +249,30 @@ build_python_wheel() {
   if [ "$AUDITWHEEL" = "1" ]; then
     log "Running auditwheel for cyclonedds==$ver"
 
-    "$venv/bin/python" -m auditwheel show "$built" || true
+    LD_LIBRARY_PATH="$libdir" "$venv/bin/python" -m auditwheel show "$built"
 
-    "$venv/bin/python" -m auditwheel repair \
+    LD_LIBRARY_PATH="$libdir" "$venv/bin/python" -m auditwheel repair \
       -w "$out" \
       "$built" \
-      2>&1 | tee "$ROOT/logs/auditwheel-$ver.log" || {
-        echo "WARNING: auditwheel repair failed."
-        echo "Copying raw wheel instead:"
-        cp -v "$built" "$out/"
-      }
+      2>&1 | tee "$ROOT/logs/auditwheel-$ver.log"
   else
+    echo "WARNING: AUDITWHEEL=0 produces a non-portable raw wheel on Linux."
     cp -v "$built" "$out/"
+  fi
+
+  local final
+  final="$(find "$out" -maxdepth 1 -name "cyclonedds-${ver}-*.whl" | head -n 1 || true)"
+  if [ -z "$final" ]; then
+    die "cyclonedds==$ver final wheel was not produced"
+  fi
+
+  if [ "$AUDITWHEEL" = "1" ]; then
+    verify_cyclonedds_wheel "$final"
   fi
 
   # 同步复制依赖 wheel，例如 rich-click / click 等
   find "$raw" -maxdepth 1 -type f -name "*.whl" ! -name "cyclonedds-${ver}-*.whl" \
-    -exec cp -nv {} "$out/" \;
+    -exec cp --update=none -v {} "$out/" \;
 
   log "Finished cyclonedds==$ver"
   echo "Wheelhouse:"
@@ -233,10 +298,55 @@ test_wheel_install() {
     --find-links="$out" \
     "cyclonedds==$ver"
 
-  "$test_venv/bin/python" - <<'PY'
+  clean_runtime_env "$test_venv/bin/cyclonedds" --help >/dev/null
+
+  clean_runtime_env "$test_venv/bin/python" - <<'PY'
+from dataclasses import dataclass
+from pathlib import Path
+from time import sleep
+import os
+
 import cyclonedds
-print("cyclonedds import OK")
-print(cyclonedds)
+from cyclonedds.__library__ import in_wheel, library_path
+from cyclonedds.core import Qos, Policy
+from cyclonedds.domain import DomainParticipant
+from cyclonedds.idl import IdlStruct
+from cyclonedds.idl.annotations import key
+from cyclonedds.pub import DataWriter
+from cyclonedds.sub import DataReader
+from cyclonedds.topic import Topic
+
+assert in_wheel, "cyclonedds is not configured to load bundled libraries"
+assert Path(library_path).exists(), f"bundled libddsc does not exist: {library_path}"
+
+@dataclass
+class Chatter(IdlStruct, typename="CodexChatter"):
+    name: str
+    key("name")
+    message: str
+    count: int
+
+participant = DomainParticipant()
+topic = Topic(
+    participant,
+    f"codex_script_smoke_{os.getpid()}",
+    Chatter,
+    qos=Qos(Policy.Reliability.Reliable(0)),
+)
+writer = DataWriter(participant, topic)
+reader = DataReader(participant, topic)
+writer.write(Chatter(name="codex", message="ok", count=1))
+
+for _ in range(20):
+    samples = reader.take(10)
+    if samples:
+        assert samples[0].message == "ok"
+        break
+    sleep(0.1)
+else:
+    raise SystemExit("DDS smoke test did not receive its own sample")
+
+print("cyclonedds import/CLI/DDS smoke OK")
 PY
 }
 

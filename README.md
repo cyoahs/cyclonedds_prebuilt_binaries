@@ -49,7 +49,7 @@ The current wheels were built on Unitree factory images:
 | Device / image | Python version | CycloneDDS versions |
 | --- | --- | --- |
 | Thor, JetPack 7.0, L4T 38.2.1 | CPython 3.12 (`cp312`) | 0.10.2, 0.10.5, 11.0.1 |
-| Orin NX, JetPack 5.1.1, L4T 35.3.1 | CPython 3.8 (`cp38`) | 0.10.2 |
+| Orin NX, JetPack 5.1.1, L4T 35.3.1 | CPython 3.8 (`cp38`) | 0.10.2, 0.10.5 |
 
 If this index does not have a wheel for your Python, CycloneDDS, or device
 image combination, build it on the target environment:

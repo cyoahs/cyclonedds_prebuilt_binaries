@@ -1,14 +1,33 @@
 # CycloneDDS Prebuilt Binaries
 
 Static website and PEP 503 compatible Python simple index for prebuilt
-CycloneDDS wheels.
+CycloneDDS wheels on Linux aarch64 Unitree images.
 
-The upstream Python binding lives at
+The upstream Python binding is
 [eclipse-cyclonedds/cyclonedds-python](https://github.com/eclipse-cyclonedds/cyclonedds-python).
-Official prebuilt binaries for `cyclonedds-python` are limited on some Linux
-aarch64 targets, so installing on Unitree robots often requires building from
-the CycloneDDS source tree first. This repository hosts a small static index of
-prebuilt wheels for those environments.
+Its official prebuilt binaries cover relatively few aarch64 robot environments,
+so installation often falls back to building CycloneDDS from source. This
+repository hosts a small static wheel index for those cases.
+
+## Install
+
+Use this repository as an extra index:
+
+```bash
+pip install --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds
+```
+
+Or install only from this index:
+
+```bash
+pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds
+```
+
+Direct wheel downloads are available under:
+
+```text
+https://pypi.cyoahs.dev/packages/
+```
 
 ## Build Environments
 
@@ -20,51 +39,70 @@ The current wheels were built on Unitree factory images:
 | Orin NX, JetPack 5.1.1, L4T 35.3.1 | CPython 3.8 (`cp38`) | 0.10.2 |
 
 If this index does not have a wheel for your Python, CycloneDDS, or device
-image combination, run [`build_cyclonedds_wheels.sh`](build_cyclonedds_wheels.sh)
-on the target environment and add the resulting wheel to the static index.
-
-## Static Site Layout
-
-This project is already laid out as static files for Cloudflare Pages. The
-deployable directory is `public/`; it contains the home page, English page,
-PEP 503 simple index, and wheel files.
-
-To migrate the domain, edit `public/site-config.js`. The simple index uses
-relative wheel links, so package installation keeps working when the domain
-changes.
-
-## Install
+image combination, build it on the target environment:
 
 ```bash
-pip install --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds
+./build_cyclonedds_wheels.sh 0.10.2
 ```
 
-To install only from this index:
+The deployed site also exposes the script:
 
-```bash
-pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds
+```text
+https://pypi.cyoahs.dev/build_cyclonedds_wheels.sh
 ```
 
-## Build Wheels
+## Static Layout
 
-```bash
-./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1
+Everything served by Cloudflare lives in `public/`:
+
+```text
+public/
+├── index.html
+├── en/
+├── simple/
+├── packages/
+├── build_cyclonedds_wheels.sh
+├── site-config.js
+├── site.js
+└── styles.css
 ```
 
-The deployed site also exposes the script at
-`https://pypi.cyoahs.dev/build_cyclonedds_wheels.sh`.
+The PyPI simple index uses relative package links, so it remains portable when
+the domain changes. To change the displayed install domain, edit
+`public/site-config.js`.
 
-Cloudflare Workers Builds can use:
+## Deploy
+
+This repository is configured for Cloudflare Workers Static Assets with
+`wrangler.jsonc`:
+
+```jsonc
+{
+  "name": "cyclonedds",
+  "compatibility_date": "2026-05-20",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}
+```
+
+Use these Cloudflare Workers Builds commands:
 
 ```text
 Build command: true
 Deploy command: npx wrangler deploy
 ```
 
-The `wrangler.jsonc` file points Workers Static Assets at `./public`.
+## Updating Wheels
 
-After adding or replacing wheels, put them in `public/packages/` and update the
-matching static pages under `public/simple/`.
+1. Build the missing wheel on the target device/image.
+2. Copy the wheel into `public/packages/`.
+3. Add the wheel link to the matching `public/simple/<package>/index.html`.
+4. If needed, update `public/packages/index.html` and the home page download list.
+
+No generated site step is required; the repository is already a static deploy
+tree.
 
 ## License
 

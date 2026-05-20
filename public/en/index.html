@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CycloneDDS Prebuilt Binaries</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/site-config.js"></script>
+    <script src="/site.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a class="brand" href="/">CycloneDDS Prebuilt Binaries</a>
+        <div class="nav-links">
+          <a href="/simple/">Simple API</a>
+          <a href="/packages/">Packages</a>
+          <a class="language-link" href="/">简体中文</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Cloudflare Pages static PyPI simple index</p>
+          <h1>CycloneDDS Prebuilt Binaries</h1>
+          <p class="lead">A static repository of prebuilt CycloneDDS Python wheels for aarch64 Linux.</p>
+          <p>A static PyPI Simple Repository API endpoint for installing CycloneDDS when official aarch64 wheels are unavailable.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/simple/cyclonedds/">View cyclonedds index</a>
+            <a class="button" href="/packages/">Browse wheel files</a>
+          </div>
+        </div>
+        <aside class="status-panel" aria-label="Repository status">
+          <div>
+            <span class="status-label">Default host</span>
+            <strong>pypi.cyoahs.dev</strong>
+          </div>
+          <div>
+            <span class="status-label">Package</span>
+            <strong>cyclonedds</strong>
+          </div>
+          <div>
+            <span class="status-label">Wheels</span>
+            <strong>4 builds</strong>
+          </div>
+        </aside>
+      </section>
+
+      <section class="band">
+        <div class="section-heading">
+          <p class="eyebrow">Install</p>
+          <h2>Usage</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel command-panel">
+            <h2>Usage</h2>
+            <p>Keep PyPI as the primary index and add this wheel index:</p>
+            <pre><code data-command="extra-index">pip install --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
+            <p>Install only from this index:</p>
+            <pre><code data-command="index">pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
+          </article>
+          <article class="panel">
+            <h2>Direct wheel downloads</h2>
+            <ul class="file-list">
+              <li><a href="/packages/cyclonedds-0.10.2-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-0.10.2-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-0.10.2-cp38-cp38-manylinux_2_27_aarch64.whl">cyclonedds-0.10.2-cp38-cp38-manylinux_2_27_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-0.10.5-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-0.10.5-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-11.0.1-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-11.0.1-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="band muted">
+        <div class="section-heading">
+          <p class="eyebrow">Maintain</p>
+          <h2>Static file maintenance</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <h2>Build wheels</h2>
+            <p>The script builds the CycloneDDS C library, builds Python wheels, runs auditwheel, and writes versioned outputs under wheelhouse.</p>
+            <pre><code>./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1</code></pre>
+            <p>After updating wheels, place files under public/packages and keep the static index pages under public/simple in sync.</p>
+          </article>
+          <article class="panel">
+            <h2>Indexed packages</h2>
+            <ul class="package-list">
+              <li><a href="/simple/click/">click</a></li>
+              <li><a href="/simple/cyclonedds/">cyclonedds</a></li>
+              <li><a href="/simple/markdown-it-py/">markdown-it-py</a></li>
+              <li><a href="/simple/mdurl/">mdurl</a></li>
+              <li><a href="/simple/pygments/">pygments</a></li>
+              <li><a href="/simple/rich/">rich</a></li>
+              <li><a href="/simple/rich-click/">rich-click</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

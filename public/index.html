@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CycloneDDS Prebuilt Binaries</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/site-config.js"></script>
+    <script src="/site.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a class="brand" href="/">CycloneDDS Prebuilt Binaries</a>
+        <div class="nav-links">
+          <a href="/simple/">Simple API</a>
+          <a href="/packages/">Packages</a>
+          <a class="language-link" href="/en/">English</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Cloudflare Pages static PyPI simple index</p>
+          <h1>CycloneDDS Prebuilt Binaries</h1>
+          <p class="lead">面向 aarch64 Linux 的 CycloneDDS Python 预编译 wheel 静态仓库。</p>
+          <p>提供符合 PyPI Simple Repository API 的静态访问入口，便于在没有官方 aarch64 wheel 时直接安装 CycloneDDS。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/simple/cyclonedds/">查看 cyclonedds 索引</a>
+            <a class="button" href="/packages/">浏览 wheel 文件</a>
+          </div>
+        </div>
+        <aside class="status-panel" aria-label="Repository status">
+          <div>
+            <span class="status-label">Default host</span>
+            <strong>pypi.cyoahs.dev</strong>
+          </div>
+          <div>
+            <span class="status-label">Package</span>
+            <strong>cyclonedds</strong>
+          </div>
+          <div>
+            <span class="status-label">Wheels</span>
+            <strong>4 builds</strong>
+          </div>
+        </aside>
+      </section>
+
+      <section class="band">
+        <div class="section-heading">
+          <p class="eyebrow">Install</p>
+          <h2>安装方式</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel command-panel">
+            <h2>安装方式</h2>
+            <p>保留 PyPI 作为主索引，额外使用本站 wheel：</p>
+            <pre><code data-command="extra-index">pip install --extra-index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
+            <p>只从本站索引安装：</p>
+            <pre><code data-command="index">pip install --index-url https://pypi.cyoahs.dev/simple cyclonedds</code></pre>
+          </article>
+          <article class="panel">
+            <h2>直接下载 wheel</h2>
+            <ul class="file-list">
+              <li><a href="/packages/cyclonedds-0.10.2-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-0.10.2-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-0.10.2-cp38-cp38-manylinux_2_27_aarch64.whl">cyclonedds-0.10.2-cp38-cp38-manylinux_2_27_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-0.10.5-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-0.10.5-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+              <li><a href="/packages/cyclonedds-11.0.1-cp312-cp312-manylinux_2_38_aarch64.whl">cyclonedds-11.0.1-cp312-cp312-manylinux_2_38_aarch64.whl</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="band muted">
+        <div class="section-heading">
+          <p class="eyebrow">Maintain</p>
+          <h2>静态文件维护</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <h2>构建 wheel</h2>
+            <p>脚本会编译 CycloneDDS C 库、构建 Python wheel、运行 auditwheel，并输出到 wheelhouse 对应版本目录。</p>
+            <pre><code>./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1</code></pre>
+            <p>更新 wheel 后，把文件放入 public/packages，并同步维护 public/simple 下的静态索引页面。</p>
+          </article>
+          <article class="panel">
+            <h2>当前索引包</h2>
+            <ul class="package-list">
+              <li><a href="/simple/click/">click</a></li>
+              <li><a href="/simple/cyclonedds/">cyclonedds</a></li>
+              <li><a href="/simple/markdown-it-py/">markdown-it-py</a></li>
+              <li><a href="/simple/mdurl/">mdurl</a></li>
+              <li><a href="/simple/pygments/">pygments</a></li>
+              <li><a href="/simple/rich/">rich</a></li>
+              <li><a href="/simple/rich-click/">rich-click</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -25,7 +25,7 @@
           <p class="eyebrow">Cloudflare Pages static PyPI simple index</p>
           <h1>CycloneDDS Prebuilt Binaries</h1>
           <p class="lead">A static repository of prebuilt CycloneDDS Python wheels for aarch64 Linux.</p>
-          <p>A static PyPI Simple Repository API endpoint for installing CycloneDDS when official aarch64 wheels are unavailable.</p>
+          <p>The official <a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a> project publishes relatively few prebuilt binaries. On Unitree devices, installation often falls back to building CycloneDDS from source first. This site provides a static PyPI Simple Repository API endpoint for those wheels.</p>
           <div class="hero-actions">
             <a class="button primary" href="/simple/cyclonedds/">View cyclonedds index</a>
             <a class="button" href="/packages/">Browse wheel files</a>
@@ -44,7 +44,51 @@
             <span class="status-label">Wheels</span>
             <strong>4 builds</strong>
           </div>
+          <div>
+            <span class="status-label">Upstream</span>
+            <strong><a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a></strong>
+          </div>
         </aside>
+      </section>
+
+      <section class="band muted">
+        <div class="section-heading">
+          <p class="eyebrow">Build context</p>
+          <h2>Problem source and build environments</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <h2>Why these wheels exist</h2>
+            <p>The upstream <a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a> releases have limited prebuilt binary coverage, especially for Linux aarch64 robot images. Without a matching wheel, installation commonly requires compiling the CycloneDDS C library and Python bindings from source.</p>
+          </article>
+          <article class="panel">
+            <h2>Current wheel environments</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Device / image</th>
+                    <th>Python version</th>
+                    <th>CycloneDDS versions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Thor, JetPack 7.0, L4T 38.2.1, Unitree factory image</td>
+                    <td>CPython 3.12 (cp312)</td>
+                    <td>0.10.2, 0.10.5, 11.0.1</td>
+                  </tr>
+                  <tr>
+                    <td>Orin NX, JetPack 5.1.1, L4T 35.3.1, Unitree factory image</td>
+                    <td>CPython 3.8 (cp38)</td>
+                    <td>0.10.2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>If this index does not have a wheel for your Python, CycloneDDS, or device image combination, run <a href="/build_cyclonedds_wheels.sh">build_cyclonedds_wheels.sh</a> on the target environment.</p>
+          </article>
+        </div>
       </section>
 
       <section class="band">
@@ -80,7 +124,7 @@
         <div class="content-grid">
           <article class="panel">
             <h2>Build wheels</h2>
-            <p>The script builds the CycloneDDS C library, builds Python wheels, runs auditwheel, and writes versioned outputs under wheelhouse.</p>
+            <p><a href="/build_cyclonedds_wheels.sh">build_cyclonedds_wheels.sh</a> builds the CycloneDDS C library, builds Python wheels, runs auditwheel, and writes versioned outputs under wheelhouse.</p>
             <pre><code>./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1</code></pre>
             <p>After updating wheels, place files under public/packages and keep the static index pages under public/simple in sync.</p>
           </article>

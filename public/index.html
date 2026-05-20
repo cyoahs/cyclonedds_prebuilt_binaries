@@ -25,7 +25,7 @@
           <p class="eyebrow">Cloudflare Pages static PyPI simple index</p>
           <h1>CycloneDDS Prebuilt Binaries</h1>
           <p class="lead">面向 aarch64 Linux 的 CycloneDDS Python 预编译 wheel 静态仓库。</p>
-          <p>提供符合 PyPI Simple Repository API 的静态访问入口，便于在没有官方 aarch64 wheel 时直接安装 CycloneDDS。</p>
+          <p><a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a> 官方预编译二进制覆盖较少，在宇树设备上经常需要先从 CycloneDDS 源码编译。本仓库提供符合 PyPI Simple Repository API 的静态访问入口，便于直接安装这些 wheel。</p>
           <div class="hero-actions">
             <a class="button primary" href="/simple/cyclonedds/">查看 cyclonedds 索引</a>
             <a class="button" href="/packages/">浏览 wheel 文件</a>
@@ -44,7 +44,51 @@
             <span class="status-label">Wheels</span>
             <strong>4 builds</strong>
           </div>
+          <div>
+            <span class="status-label">Upstream</span>
+            <strong><a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a></strong>
+          </div>
         </aside>
+      </section>
+
+      <section class="band muted">
+        <div class="section-heading">
+          <p class="eyebrow">Build context</p>
+          <h2>问题来源与编译环境</h2>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <h2>为什么需要这些 wheel</h2>
+            <p><a href="https://github.com/eclipse-cyclonedds/cyclonedds-python">cyclonedds-python</a> 官方发布的预编译二进制较少，尤其是 Linux aarch64 和机器人出厂系统组合。没有匹配 wheel 时，安装过程通常会转为从源码构建 CycloneDDS C 库和 Python 绑定。</p>
+          </article>
+          <article class="panel">
+            <h2>当前 wheel 环境</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Device / image</th>
+                    <th>Python 版本</th>
+                    <th>CycloneDDS 版本</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Thor，JetPack 7.0，L4T 38.2.1，宇树出厂镜像</td>
+                    <td>CPython 3.12（cp312）</td>
+                    <td>0.10.2, 0.10.5, 11.0.1</td>
+                  </tr>
+                  <tr>
+                    <td>Orin NX，JetPack 5.1.1，L4T 35.3.1，宇树出厂镜像</td>
+                    <td>CPython 3.8（cp38）</td>
+                    <td>0.10.2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>如果这里没有匹配你的 Python、CycloneDDS 或设备镜像组合，请在目标环境运行 <a href="/build_cyclonedds_wheels.sh">build_cyclonedds_wheels.sh</a> 自行编译。</p>
+          </article>
+        </div>
       </section>
 
       <section class="band">
@@ -80,7 +124,7 @@
         <div class="content-grid">
           <article class="panel">
             <h2>构建 wheel</h2>
-            <p>脚本会编译 CycloneDDS C 库、构建 Python wheel、运行 auditwheel，并输出到 wheelhouse 对应版本目录。</p>
+            <p><a href="/build_cyclonedds_wheels.sh">build_cyclonedds_wheels.sh</a> 会编译 CycloneDDS C 库、构建 Python wheel、运行 auditwheel，并输出到 wheelhouse 对应版本目录。</p>
             <pre><code>./build_cyclonedds_wheels.sh 0.10.2 0.10.5 11.0.1</code></pre>
             <p>更新 wheel 后，把文件放入 public/packages，并同步维护 public/simple 下的静态索引页面。</p>
           </article>

@@ -272,7 +272,7 @@ build_python_wheel() {
 
   # 同步复制依赖 wheel，例如 rich-click / click 等
   find "$raw" -maxdepth 1 -type f -name "*.whl" ! -name "cyclonedds-${ver}-*.whl" \
-    -exec cp --update=none -v {} "$out/" \;
+    -exec cp -n -v {} "$out/" \;
 
   log "Finished cyclonedds==$ver"
   echo "Wheelhouse:"
@@ -293,6 +293,8 @@ test_wheel_install() {
 
   "$test_venv/bin/python" -m pip install -U pip >/dev/null
 
+  # wheelhouse 已包含 cyclonedds 及其全部依赖 wheel（rich-click / click 等），
+  # 因此仅用它离线解析即可。
   "$test_venv/bin/python" -m pip install \
     --no-index \
     --find-links="$out" \
